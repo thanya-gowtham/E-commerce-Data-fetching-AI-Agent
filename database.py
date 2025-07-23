@@ -8,7 +8,8 @@ engine = create_engine(DATABASE_URL)
 
 def load_data_to_db():
     """Loads CSV data into SQLite tables."""
-    data_dir = "data"
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    data_dir = os.path.join(BASE_DIR, "data")
     if not os.path.exists(data_dir):
         print(f"Error: Data directory '{data_dir}' not found. Please run generate_data.py first.")
         return

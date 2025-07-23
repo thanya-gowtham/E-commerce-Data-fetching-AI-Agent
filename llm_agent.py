@@ -1,55 +1,56 @@
-from langchain_community.utilities import SQLDatabase
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
-from langchain_community.llms.ollama import Ollama
-from langchain.agents.agent_toolkits.sql.base import create_sql_agent
-from sqlalchemy import create_engine, inspect
-import os
+from langchain.agents import AgentExecutor, initialize_agent, AgentType
+from langchain_community.utilities import SQLDatabase
+from langchain_community.llms import Ollama
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+import warnings
+import asyncio
 
-# Step 1: Database setup
-DATABASE_URL = "sqlite:///./ecommerce.db"
-engine = create_engine(DATABASE_URL)
-db = SQLDatabase(engine)
+# Suppress LangChain agent deprecation warning
+warnings.filterwarnings("ignore", category=UserWarning)
 
-# Step 2: LLM setup
-llm = Ollama(model="gemma:2b", temperature=0)
+# ✅ Step 1: Custom system prompt for markdown tables
+system_prompt = """You are an intelligent data analyst.
+When presenting tabular data like grouped sales, averages, or comparisons, always format it using Markdown tables (pipe | separated).
+Avoid unnecessary explanations. Keep answers clean, brief, and formatted as tables wherever applicable."""
 
-# Step 3: Toolkit setup
+# ✅ Step 2: Setup LLM with prompt (llama3)
+llm = Ollama(model="llama3", temperature=0.2)
+
+# ✅ Step 3: Connect to DB and setup toolkit
+db = SQLDatabase.from_uri("sqlite:///ecommerce.db")
 toolkit = SQLDatabaseToolkit(db=db, llm=llm)
 
-# Step 4: Create agent
-agent_executor = create_sql_agent(
+# ✅ Step 4: Initialize agent with system message
+agent_executor = initialize_agent(
+    tools=toolkit.get_tools(),
     llm=llm,
-    toolkit=toolkit,
+    agent=AgentType.OPENAI_FUNCTIONS,
     verbose=True,
-    handle_parsing_errors=True
+    agent_kwargs={
+        "system_message": system_prompt
+    }
 )
 
-async def query_data_agent(question: str):
-    """Query the database using the LangChain SQL agent."""
+# ✅ Step 5: Async agent function to query from Streamlit frontend
+async def query_data_agent(query: str) -> str:
     try:
-        response = await agent_executor.ainvoke({"input": question})
-        return response.get("output", "Could not retrieve an answer.")
+        result = await agent_executor.ainvoke({"input": query})
+        return result["output"]
     except Exception as e:
-        print(f"Error in LLM agent: {e}")
-        return f"An error occurred: {e}"
+        return f"❌ Error: {e}"
 
-# Testing
+# ✅ (Optional) Run sample queries if executed directly
 if __name__ == "__main__":
-    import asyncio
-    from database import load_data_to_db
-
-    load_data_to_db()
-
-    async def run_tests():
-        print("\n--- Testing LLM Agent ---")
-
+    async def run_queries():
+        print("\n--- Testing LLM Agent ---\n")
         queries = [
-            "What is  total sales for item id 17"
+            "Show the total sales amount grouped by product category.",
+            "List the average sales per item per category.",
         ]
-
         for q in queries:
-            print(f"\nQuery: {q}")
+            print(f"\n🟡 Query: {q}")
             res = await query_data_agent(q)
-            print(f"Response: {res}")
+            print(f"✅ Response:\n{res}\n")
 
-    asyncio.run(run_tests())
+    asyncio.run(run_queries())
