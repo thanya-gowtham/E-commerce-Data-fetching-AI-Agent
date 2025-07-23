@@ -23,20 +23,20 @@ A local AI-powered agent built with *LangChain, **Mistral (via Ollama), and **SQ
 
 ### 1. Steps
 
-```bash
 git clone https://github.com/achugowda/E-commerce-Data-fetching-AI-Agent.git
 cd E-commerce-Data-fetching-AI-Agent
 
 ### 2. Create and Activate Virtual Environment
 python -m venv venv
 
-# For Linux/Mac
+#### For Linux/Mac
 source venv/bin/activate
 
-# For Windows
+#### For Windows
 venv\Scripts\activate
 
 ### 3. Install Python Dependencies
+
 pip install -r requirements.txt
 
 ### 4. Set Up Ollama and Pull Mistral Model
@@ -56,6 +56,7 @@ frontend/ – Web UI to input queries and see results in real-time (with markdow
 
 ##📂 Folder Structure
 
+```bash
 E-commerce-Data-fetching-AI-Agent/
 ├── database.py
 ├── llm_agent.py
