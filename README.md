@@ -27,17 +27,23 @@ git clone https://github.com/achugowda/E-commerce-Data-fetching-AI-Agent.git
 cd E-commerce-Data-fetching-AI-Agent
 
 ### 2. Create and Activate Virtual Environment
+```bash
 python -m venv venv
-
+```
 #### For Linux/Mac
+```bash
 source venv/bin/activate
+```
 
 #### For Windows
+```bash
 venv\Scripts\activate
+```
 
 ### 3. Install Python Dependencies
-
+```bash
 pip install -r requirements.txt
+```
 
 ### 4. Set Up Ollama and Pull Mistral Model
 
@@ -46,15 +52,16 @@ Open a terminal and pull the Mistral model:
 ollama pull mistral
 Make sure Ollama is running in the background.
 
+---
 ## How It Works
 
-database.py – Loads your ecommerce .csv into SQLite.
-llm_agent.py – Runs LangChain’s SQL Agent over your database.
-main.py – FastAPI backend to serve user queries.
-frontend/ – Web UI to input queries and see results in real-time (with markdown + charts).
+- database.py – Loads your ecommerce .csv into SQLite.
+- llm_agent.py – Runs LangChain’s SQL Agent over your database.
+- main.py – FastAPI backend to serve user queries.
+- frontend/ – Web UI to input queries and see results in real-time (with markdown + charts).
 
-
-##📂 Folder Structure
+---
+## 📂 Folder Structure
 
 ```bash
 E-commerce-Data-fetching-AI-Agent/
@@ -67,3 +74,4 @@ E-commerce-Data-fetching-AI-Agent/
 │   └── ...
 └── data/
     └── ecommerce.csv  ← (Your data file)
+```
